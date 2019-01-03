@@ -3,10 +3,9 @@
 
 #include "winsys.h"
 
-class CSnake:public CFramedWindow
-{
+class CSnake : public CFramedWindow {
 public:
-  CSnake(CRect r, char _c = ' ');
+    CSnake(CRect r, char _c = ' ');
 
 };
 
