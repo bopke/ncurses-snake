@@ -5,7 +5,9 @@
 
 class CSnake : public CFramedWindow {
 public:
-    CSnake(CRect r, char _c = ' ');
+    CSnake::CSnake(CRect r, char _c = ' ') :
+            CFramedWindow(r, _c) {
+    }
 
 };
 
