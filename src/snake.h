@@ -18,6 +18,7 @@ private:
     bool died = false;
     int course = KEY_RIGHT;
     int level = 0;
+    CPoint food;
     vector <CPoint> parts;
 
     void reset() {
@@ -31,10 +32,46 @@ private:
         parts.push_back(CPoint(headPosX, headPosY));
         parts.push_back(CPoint(headPosX - 1, headPosY));
         parts.push_back(CPoint(headPosX - 2, headPosY));
+        generateFood();
         paint();
     }
 
+    void generateFood() {
+        srand(time(NULL));
+        CPoint candidate;
+        do {
+            candidate = CPoint(rand() % (geom.size.y - 2) + 1, rand() % (geom.size.x - 2) + 1);
+            bool s = true;
+            for (auto &part:parts) {
+                if (part.x == candidate.x && candidate.y == part.x) {
+                    s = false;
+                    break;
+                }
+            }
+            if (s) break;
+        } while (true);
+        food = candidate;
+    }
+
+    bool ate() {
+        bool t = false;
+        for (auto &part : parts) {
+            if (part.x == food.x && part.y == food.y) {
+                level++;
+                t = true;
+                break;
+            }
+        }
+        if (t) {
+            generateFood();
+            return true;
+        }
+        return false;
+    }
+
     void draw() {
+        gotoyx(food.y + geom.topleft.y, food.x + geom.topleft.x);
+        printc('O');
         gotoyx(parts[0].y + geom.topleft.y, parts[0].x + geom.topleft.x);
         printc('*');
         for (unsigned int i = 1; i < parts.size(); i++) {
