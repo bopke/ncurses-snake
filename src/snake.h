@@ -5,6 +5,7 @@ typedef int i1;
 
 #include <vector>
 #include <cstdlib>
+#include <ctime>
 
 #include "winsys.h"
 #include "cpoint.h"
@@ -14,6 +15,7 @@ class CSnake : public CFramedWindow {
 private:
     bool pause = true;
     bool help = true;
+    bool died = false;
     int course = KEY_RIGHT;
     int level = 0;
     vector <CPoint> parts;
@@ -24,12 +26,12 @@ private:
         course = KEY_RIGHT;
         level = 0;
         srand(time(NULL));
-        int headPosX = rand() / RAND_MAX * 13 + 4;
-        int headPosY = rand() / RAND_MAX * 40 + 2;
+        int headPosX = RAND_MAX % (geom.size.x - 5) + 1;
+        int headPosY = RAND_MAX % (geom.size.y - 3) + 1;
         parts.push_back(CPoint(headPosX, headPosY));
         parts.push_back(CPoint(headPosX - 1, headPosY));
         parts.push_back(CPoint(headPosX - 2, headPosY));
-
+        paint();
     }
 
     void draw() {
@@ -39,6 +41,12 @@ private:
             gotoyx(parts[i].y + geom.topleft.y, parts[i].x + geom.topleft.x);
             printc('+');
         }
+    }
+
+    void drawDead() {
+        int x = geom.topleft.x, y = geom.topleft.y;
+        gotoyx(y + 1, x + 1);
+        printl("GAME OVER, result: %d", level);
     }
 
     void drawPause() {
@@ -111,9 +119,13 @@ public:
 
     void paint() {
         CFramedWindow::paint();
-        gotoyx(geom.topleft.y - 1, geom.topleft.x);
-        printl("| LEVEL: %d |", level);
         draw();
+        if (!died) {
+            gotoyx(geom.topleft.y - 1, geom.topleft.x);
+            printl("| LEVEL: %d |", level);
+        } else {
+            drawDead();
+        }
         if (pause) {
             if (help) drawHelp();
             else drawPause();
