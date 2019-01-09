@@ -12,6 +12,7 @@ typedef int i1;
 
 class CSnake : public CFramedWindow {
 private:
+    int course = KEY_RIGHT;
     vector <CPoint> parts;
 public:
     CSnake(CRect r, char _c = ' ') :
@@ -22,6 +23,16 @@ public:
         parts.push_back(CPoint(headPosX, headPosY));
         parts.push_back(CPoint(headPosX, headPosY - 1));
         parts.push_back(CPoint(headPosX, headPosY - 2));
+    }
+
+    bool handleEvent(int key) {
+        if ((key == KEY_UP && course != KEY_DOWN) || (key == KEY_DOWN && course != KEY_UP) ||
+            (key == KEY_LEFT && course != KEY_RIGHT) || (key == KEY_RIGHT && course != KEY_LEFT)) {
+            course = key;
+            return true;
+        }
+        if (CFramedWindow::handleEvent(key)) return true;
+        return false;
     }
 
     void draw() {
