@@ -13,16 +13,17 @@ typedef int i1;
 class CSnake : public CFramedWindow {
 private:
     int course = KEY_RIGHT;
+    int level;
     vector <CPoint> parts;
 public:
     CSnake(CRect r, char _c = ' ') :
             CFramedWindow(r, _c) {
         srand(time(NULL));
-        int headPosX = rand() / RAND_MAX * 18;
-        int headPosY = rand() / RAND_MAX * 41 + 2;
+        int headPosX = rand() / RAND_MAX * 13 + 4;
+        int headPosY = rand() / RAND_MAX * 40 + 2;
         parts.push_back(CPoint(headPosX, headPosY));
-        parts.push_back(CPoint(headPosX, headPosY - 1));
-        parts.push_back(CPoint(headPosX, headPosY - 2));
+        parts.push_back(CPoint(headPosX - 1, headPosY));
+        parts.push_back(CPoint(headPosX - 2, headPosY));
     }
 
     bool handleEvent(int key) {
@@ -42,7 +43,13 @@ public:
             gotoyx(parts[i].y + geom.topleft.y, parts[i].x + geom.topleft.x);
             printc('+');
         }
+    }
+
+    void paint() {
         CFramedWindow::paint();
+        gotoyx(geom.topleft.y - 1, geom.topleft.x);
+        printl("| LEVEL: %d |", level);
+        draw();
     }
 };
 
