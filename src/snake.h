@@ -15,6 +15,16 @@ private:
     int course = KEY_RIGHT;
     int level;
     vector <CPoint> parts;
+
+    void draw() {
+        gotoyx(parts[0].y + geom.topleft.y, parts[0].x + geom.topleft.x);
+        printc('*');
+        for (unsigned int i = 1; i < parts.size(); i++) {
+            gotoyx(parts[i].y + geom.topleft.y, parts[i].x + geom.topleft.x);
+            printc('+');
+        }
+    }
+
 public:
     CSnake(CRect r, char _c = ' ') :
             CFramedWindow(r, _c) {
@@ -34,15 +44,6 @@ public:
         }
         if (CFramedWindow::handleEvent(key)) return true;
         return false;
-    }
-
-    void draw() {
-        gotoyx(parts[0].y + geom.topleft.y, parts[0].x + geom.topleft.x);
-        printc('*');
-        for (unsigned int i = 1; i < parts.size(); i++) {
-            gotoyx(parts[i].y + geom.topleft.y, parts[i].x + geom.topleft.x);
-            printc('+');
-        }
     }
 
     void paint() {
