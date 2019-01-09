@@ -15,8 +15,22 @@ private:
     bool pause = true;
     bool help = true;
     int course = KEY_RIGHT;
-    int level;
+    int level = 0;
     vector <CPoint> parts;
+
+    void reset() {
+        pause = false;
+        help = false;
+        course = KEY_RIGHT;
+        level = 0;
+        srand(time(NULL));
+        int headPosX = rand() / RAND_MAX * 13 + 4;
+        int headPosY = rand() / RAND_MAX * 40 + 2;
+        parts.push_back(CPoint(headPosX, headPosY));
+        parts.push_back(CPoint(headPosX - 1, headPosY));
+        parts.push_back(CPoint(headPosX - 2, headPosY));
+
+    }
 
     void draw() {
         gotoyx(parts[0].y + geom.topleft.y, parts[0].x + geom.topleft.x);
@@ -54,18 +68,14 @@ private:
         printl("Also, dont die.");
         gotoyx(y + 7, x + 2);
         printl("press 'p' or 'r' to play or 'h' for help");
-
     }
 
 public:
     CSnake(CRect r, char _c = ' ') :
             CFramedWindow(r, _c) {
-        srand(time(NULL));
-        int headPosX = rand() / RAND_MAX * 13 + 4;
-        int headPosY = rand() / RAND_MAX * 40 + 2;
-        parts.push_back(CPoint(headPosX, headPosY));
-        parts.push_back(CPoint(headPosX - 1, headPosY));
-        parts.push_back(CPoint(headPosX - 2, headPosY));
+        reset();
+        pause = true;
+        draw();
     }
 
     bool handleEvent(int key) {
@@ -83,13 +93,20 @@ public:
         if (pause && tolower(key) == 'q') {
             exit(0);
         }
-        if (!pause && ((key == KEY_UP && course != KEY_DOWN) || (key == KEY_DOWN && course != KEY_UP) ||
-                       (key == KEY_LEFT && course != KEY_RIGHT) || (key == KEY_RIGHT && course != KEY_LEFT))) {
-            course = key;
+        if (tolower(key) == 'r') {
+            reset();
             return true;
         }
-        if (CFramedWindow::handleEvent(key)) return true;
-        return false;
+        if (!pause && (key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT)) {
+            if ((key == KEY_UP && course != KEY_DOWN) || (key == KEY_DOWN && course != KEY_UP) ||
+                (key == KEY_LEFT && course != KEY_RIGHT) || (key == KEY_RIGHT && course != KEY_LEFT)) {
+                course = key;
+            }
+            return true;
+        }
+
+        return
+                CFramedWindow::handleEvent(key);
     }
 
     void paint() {
