@@ -1,3 +1,3 @@
-# OOP-snake
+# ncurses-snake
 
-Snake game - 8 project.
+Snake game - last project for my OOP-1 classes.
