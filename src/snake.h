@@ -210,6 +210,9 @@ public:
         if (!died) {
             gotoyx(geom.topleft.y - 1, geom.topleft.x);
             printl("| LEVEL: %d |", level);
+            if (speed == 1) {
+                printl("  FULL THROTTLE!");
+            }
             if (pause) {
                 if (help) drawHelp();
                 else drawPause();
