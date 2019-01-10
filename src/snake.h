@@ -42,7 +42,7 @@ private:
     void generateFood() {
         CPoint candidate;
         do {
-            candidate = CPoint((rand() % (geom.size.y - 2)) + 1, (rand() % (geom.size.x - 2)) + 1);
+            candidate = CPoint((rand() % (geom.size.x - 2)) + 1, (rand() % (geom.size.y - 2)) + 1);
             bool s = true;
             for (auto &part:parts) {
                 if (part.x == candidate.x && candidate.y == part.x) {
