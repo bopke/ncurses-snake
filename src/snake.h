@@ -18,6 +18,8 @@ private:
     bool died = false;
     int course = KEY_RIGHT;
     int level = 0;
+    int speed = 40;
+    int ticks = 0;
     CPoint food;
     vector <CPoint> parts;
 
@@ -59,6 +61,7 @@ private:
             if (part.x == food.x && part.y == food.y) {
                 level++;
                 t = true;
+                if (speed > 1) speed--;
                 break;
             }
         }
@@ -169,7 +172,14 @@ public:
     }
 
     bool handleEvent(int key) {
-        if (tolower(key) == 'p') {
+        if (!pause && key == ERR) {
+            ticks++;
+            if (speed <= ticks) {
+                ticks = 0;
+                paint();
+            }
+        }
+        if (!died && tolower(key) == 'p') {
             pause = !pause;
             if (!pause) {
                 help = false;
