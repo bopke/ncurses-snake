@@ -29,8 +29,8 @@ private:
         died = false;
         course = KEY_RIGHT;
         level = 0;
-        int headPosX = RAND_MAX % (geom.size.x - 5) + 1;
-        int headPosY = RAND_MAX % (geom.size.y - 3) + 1;
+        int headPosX = rand() % (geom.size.x - 5) + 1;
+        int headPosY = rand() % (geom.size.y - 3) + 1;
         parts.clear();
         parts.push_back(CPoint(headPosX, headPosY));
         parts.push_back(CPoint(headPosX - 1, headPosY));
