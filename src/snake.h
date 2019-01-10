@@ -1,8 +1,6 @@
 #ifndef __SNAKE_H__
 #define __SNAKE_H__
 
-typedef int i1;
-
 #include <vector>
 #include <cstdlib>
 #include <ctime>
@@ -147,7 +145,6 @@ private:
         printl("arrows - move snake (in play mode) or");
         gotoyx(y + 7, x + 12);
         printl("move window (in pause mode)");
-
     }
 
     void drawHelp() {
@@ -204,9 +201,7 @@ public:
             }
             return true;
         }
-
-        return
-                CFramedWindow::handleEvent(key);
+        return CFramedWindow::handleEvent(key);
     }
 
     void paint() {
