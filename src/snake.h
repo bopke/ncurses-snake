@@ -24,11 +24,12 @@ private:
     void reset() {
         pause = false;
         help = false;
+        died = false;
         course = KEY_RIGHT;
         level = 0;
-        srand(time(NULL));
         int headPosX = RAND_MAX % (geom.size.x - 5) + 1;
         int headPosY = RAND_MAX % (geom.size.y - 3) + 1;
+        parts.clear();
         parts.push_back(CPoint(headPosX, headPosY));
         parts.push_back(CPoint(headPosX - 1, headPosY));
         parts.push_back(CPoint(headPosX - 2, headPosY));
@@ -37,10 +38,9 @@ private:
     }
 
     void generateFood() {
-        srand(time(NULL));
         CPoint candidate;
         do {
-            candidate = CPoint(rand() % (geom.size.y - 2) + 1, rand() % (geom.size.x - 2) + 1);
+            candidate = CPoint((rand() % (geom.size.y - 2)) + 1, (rand() % (geom.size.x - 2)) + 1);
             bool s = true;
             for (auto &part:parts) {
                 if (part.x == candidate.x && candidate.y == part.x) {
@@ -69,15 +69,59 @@ private:
         return false;
     }
 
+    bool move() {
+        if (pause) {
+            return true;
+        }
+        CPoint tail = parts[parts.size() - 1];
+        for (unsigned long i = parts.size() - 1; i > 0; i--) {
+            parts[i] = parts[i - 1];
+        }
+        if (course == KEY_DOWN) {
+            parts[0] += CPoint(0, 1);
+        } else if (course == KEY_UP) {
+            parts[0] += CPoint(0, -1);
+        } else if (course == KEY_RIGHT) {
+            parts[0] += CPoint(1, 0);
+        } else if (course == KEY_LEFT) {
+            parts[0] += CPoint(-1, 0);
+        }
+        for (unsigned int i = 1; i < parts.size(); i++) {
+            if (parts[0].x == parts[i].x && parts[0].y == parts[i].y) {
+                return false;
+            }
+        }
+        if (parts[0].x == 0) {
+            parts[0].x = geom.size.x - 2;
+        }
+        if (parts[0].x == geom.size.x - 1) {
+            parts[0].x = 1;
+        }
+        if (parts[0].y == 0) {
+            parts[0].y = geom.size.y - 2;
+        }
+        if (parts[0].y == geom.size.y - 1) {
+            parts[0].y = 1;
+        }
+        if (ate()) {
+            parts.push_back(tail);
+        }
+        return true;
+    }
+
     void draw() {
+        if (!move()) {
+            died = true;
+            pause = true;
+        }
         gotoyx(food.y + geom.topleft.y, food.x + geom.topleft.x);
         printc('O');
-        gotoyx(parts[0].y + geom.topleft.y, parts[0].x + geom.topleft.x);
-        printc('*');
         for (unsigned int i = 1; i < parts.size(); i++) {
             gotoyx(parts[i].y + geom.topleft.y, parts[i].x + geom.topleft.x);
             printc('+');
         }
+        gotoyx(parts[0].y + geom.topleft.y, parts[0].x + geom.topleft.x);
+        printc('*');
     }
 
     void drawDead() {
@@ -118,6 +162,7 @@ private:
 public:
     CSnake(CRect r, char _c = ' ') :
             CFramedWindow(r, _c) {
+        srand(time(NULL));
         reset();
         pause = true;
         draw();
@@ -142,7 +187,7 @@ public:
             reset();
             return true;
         }
-        if (!pause && (key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT)) {
+        if (!died && !pause && (key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT)) {
             if ((key == KEY_UP && course != KEY_DOWN) || (key == KEY_DOWN && course != KEY_UP) ||
                 (key == KEY_LEFT && course != KEY_RIGHT) || (key == KEY_RIGHT && course != KEY_LEFT)) {
                 course = key;
@@ -160,12 +205,12 @@ public:
         if (!died) {
             gotoyx(geom.topleft.y - 1, geom.topleft.x);
             printl("| LEVEL: %d |", level);
+            if (pause) {
+                if (help) drawHelp();
+                else drawPause();
+            }
         } else {
             drawDead();
-        }
-        if (pause) {
-            if (help) drawHelp();
-            else drawPause();
         }
     }
 };
