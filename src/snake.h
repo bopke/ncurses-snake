@@ -111,7 +111,7 @@ private:
     }
 
     void draw() {
-        if (!move()) {
+        if (!pause && !move()) {
             died = true;
             pause = true;
         }
@@ -200,6 +200,10 @@ public:
                 course = key;
             }
             return true;
+        }
+        if (key == '\t') {
+            pause = true;
+            paint();
         }
         return CFramedWindow::handleEvent(key);
     }
