@@ -164,6 +164,7 @@ public:
             CFramedWindow(r, _c) {
         srand(time(NULL));
         reset();
+        help = true;
         pause = true;
         draw();
     }
