@@ -174,7 +174,6 @@ public:
             ticks++;
             if (speed <= ticks) {
                 ticks = 0;
-                paint();
             }
         }
         if (!died && tolower(key) == 'p') {
@@ -204,7 +203,6 @@ public:
         }
         if (key == '\t') {
             pause = true;
-            paint();
         }
         return CFramedWindow::handleEvent(key);
     }
